@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>画像配置レイアウトアプリ</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <header>
+            <h1>Photo Layout</h1>
+        </header>
+
+        <main>
+            <!-- Settings Section -->
+            <section class="settings-panel">
+                <div class="control-group">
+                    <label>用紙サイズ:</label>
+                    <select id="sizeSelect">
+                        <option value="L">L判 (89x127mm)</option>
+                        <option value="2L">2L判 (127x178mm)</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>向き:</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="orientation" value="landscape" checked> 横</label>
+                        <label><input type="radio" name="orientation" value="portrait"> 縦</label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Upload Section -->
+            <section class="upload-section">
+                <input type="file" id="imageInput" multiple accept="image/*">
+                <label for="imageInput" class="upload-btn">画像をアップロード (最大4枚)</label>
+            </section>
+
+            <!-- Image List / Editor Entry -->
+            <section id="imageList" class="image-list">
+                <!-- Thumbnails will be added here -->
+            </section>
+
+            <!-- Canvas Container -->
+            <section class="canvas-wrapper">
+                <h3>プレビュー (ドラッグで移動)</h3>
+                <div class="canvas-scroll-container">
+                    <canvas id="outputCanvas"></canvas>
+                </div>
+            </section>
+
+            <!-- Action Buttons -->
+            <section class="actions">
+                <button id="downloadPng" class="btn primary">PNGで保存</button>
+                <button id="downloadJpeg" class="btn secondary">JPEGで保存</button>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal for Cropping -->
+    <div id="cropModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>画像をトリミング</h2>
+                <button id="closeModal" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="crop-container">
+                    <img id="cropImage" src="" alt="To Crop">
+                    <div class="crop-toolbar">
+                        <label title="画像を切り抜き"><input type="radio" name="cropTool" value="crop" checked> ✂️ クロップ</label>
+                        <label title="画像を移動"><input type="radio" name="cropTool" value="move"> ✋ 移動</label>
+                    </div>
+                </div>
+
+                <div class="crop-controls">
+                    <div class="crop-mode-switch">
+                        <label><input type="radio" name="cropMode" value="free" checked> 自由 / 比率</label>
+                        <label><input type="radio" name="cropMode" value="mm"> mm指定</label>
+                    </div>
+
+                    <div id="mmControls" class="mm-inputs hidden">
+                        <label>幅(mm): <input type="number" id="cropDidWidth" value="40" min="1"></label>
+                        <label>高さ(mm): <input type="number" id="cropDidHeight" value="30" min="1"></label>
+                        <!-- Apply button removed -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="deleteImage" class="btn danger" style="margin-right: auto;">この画像を削除</button>
+                <button id="confirmCrop" class="btn primary">決定</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
