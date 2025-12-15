@@ -64,7 +64,6 @@ function init() {
     imageInput.addEventListener('change', handleFiles);
 
     // Drag and Drop (Container)
-    // Check if appContainer exists (it should)
     if (appContainer) {
         appContainer.addEventListener('dragover', (e) => {
             e.preventDefault();
@@ -266,9 +265,6 @@ function openEditor(id) {
     // Default tool: Crop, Default mode: free
     document.querySelector('input[name="cropTool"][value="crop"]').checked = true;
 
-    // We don't necessarily reset cropMode, but user might want to start fresh?
-    // Let's keep it sticky or reset. Sticky is fine.
-
     if (state.cropper) state.cropper.destroy();
 
     state.cropper = new Cropper(cropImageEl, {
@@ -303,43 +299,32 @@ function applyCrop() {
     const mode = document.querySelector('input[name="cropMode"]:checked').value;
 
     // 1. Get cropped result
-    // Note: getCroppedCanvas() returns canvas at ORIGINAL resolution of the crop
     let resultCanvas = state.cropper.getCroppedCanvas();
 
     if (!resultCanvas) return;
 
     if (mode === 'mm') {
-        // MM Mode: We want the FINAL display size to be exactly what user typed.
+        // MM Mode
         const targetW_mm = parseFloat(cropDidWidthInput.value);
         const targetH_mm = parseFloat(cropDidHeightInput.value);
         const targetW_px = mmToPx(targetW_mm);
         const targetH_px = mmToPx(targetH_mm);
 
-        // We update the display size on the main canvas
         imgState.width = targetW_px;
         imgState.height = targetH_px;
 
-        // The bitmap is the cropped area. We just use it.
-        // If the bitmap is 4000px wide, and we display at 400px, it will be high res. Good.
-        // We do DO NOT resize the bitmap down, to keep quality for printing.
-
     } else {
-        // Free Mode:
-        // We want to MAINTAIN SCALE.
-        // Current scale = Display Width / Bitmap Width
+        // Free Mode
         const currentScale = imgState.width / imgState.bitmap.width;
 
-        // New Bitmap Width
         const newBitmapW = resultCanvas.width;
         const newBitmapH = resultCanvas.height;
 
-        // New Display Size = New Bitmap Size * Scale
         imgState.width = newBitmapW * currentScale;
         imgState.height = newBitmapH * currentScale;
     }
 
     createImageBitmap(resultCanvas).then(bmp => {
-        // Close previous bitmap? JS GC handles it usually, but good to know we replace it.
         imgState.bitmap = bmp;
         drawCanvas();
         closeEditor();
@@ -398,7 +383,6 @@ function onCanvasMove(e) {
         let newY = pos.y - state.dragOffsetY;
 
         // SNAP LOGIC
-        // Snap to nearest 1mm
         const snapPx = mmToPx(1);
         newX = Math.round(newX / snapPx) * snapPx;
         newY = Math.round(newY / snapPx) * snapPx;
@@ -420,8 +404,17 @@ function downloadResult(format) {
     const mime = format === 'png' ? 'image/png' : 'image/jpeg';
     const quality = format === 'jpeg' ? 1.0 : undefined;
 
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, '0');
+    const d = String(now.getDate()).padStart(2, '0');
+    const H = String(now.getHours()).padStart(2, '0');
+    const M = String(now.getMinutes()).padStart(2, '0');
+    const S = String(now.getSeconds()).padStart(2, '0');
+    const timestamp = `${y}${m}${d}_${H}${M}${S}`;
+
     const link = document.createElement('a');
-    link.download = `layout_image.${format}`;
+    link.download = `layout_image_${timestamp}.${format}`;
     link.href = canvas.toDataURL(mime, quality);
     link.click();
 }
