@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>画像配置レイアウトアプリ</title>
+    <title>Photo Layout — 写真を、一枚に。</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="favicon.ico">
@@ -12,88 +12,115 @@
 
 <body>
     <div class="app-container">
-        <header>
-            <h1>Photo Layout</h1>
+        <header class="app-header">
+            <div class="brand">
+                <span class="brand-mark" aria-hidden="true"><span></span><span></span></span>
+                <span>Photo Layout<span class="brand-caption">YOUR LITTLE PRINT STUDIO</span></span>
+            </div>
+            <span class="header-note">写真を楽しむ、小さな編集室。</span>
         </header>
 
         <main>
-            <!-- Settings Section -->
-            <section class="settings-panel">
-                <div class="control-group">
-                    <label>用紙サイズ:</label>
-                    <select id="sizeSelect">
-                        <option value="L">L判 (89x127mm)</option>
-                        <option value="2L">2L判 (127x178mm)</option>
-                    </select>
-                </div>
-                <div class="control-group">
-                    <label>向き:</label>
-                    <div class="radio-group">
-                        <label><input type="radio" name="orientation" value="landscape" checked> 横</label>
-                        <label><input type="radio" name="orientation" value="portrait"> 縦</label>
+            <div class="page-intro">
+                <div><p class="eyebrow">MAKE ROOM FOR YOUR MEMORIES</p><h1>写真を、一枚に仕立てる。</h1>
+                    <p class="intro-description">お気に入りを切り抜いて、並べて。印刷したくなる一枚を。</p></div>
+                <span class="format-badge"><span aria-hidden="true"></span>L / 2L PRINT</span>
+            </div>
+
+            <div class="workspace">
+                <aside class="sidebar" aria-label="レイアウト設定">
+                    <section class="panel settings-panel" aria-labelledby="paperHeading">
+                        <div class="panel-heading"><h2 id="paperHeading"><span class="step-number">01</span>用紙を選ぶ</h2><span class="panel-caption">PAPER</span></div>
+                        <div class="control-group">
+                            <label for="sizeSelect">用紙サイズ</label>
+                            <select id="sizeSelect">
+                                <option value="L">L判 — 89 × 127 mm</option>
+                                <option value="2L">2L判 — 127 × 178 mm</option>
+                            </select>
+                        </div>
+                        <fieldset class="control-group orientation-control">
+                            <legend>用紙の向き</legend>
+                            <div class="radio-group">
+                                <label><input type="radio" name="orientation" value="landscape" checked><span><i class="orientation-icon landscape" aria-hidden="true"></i>横向き</span></label>
+                                <label><input type="radio" name="orientation" value="portrait"><span><i class="orientation-icon portrait" aria-hidden="true"></i>縦向き</span></label>
+                            </div>
+                        </fieldset>
+                    </section>
+
+                    <section class="panel photos-panel" aria-labelledby="photosHeading">
+                        <div class="panel-heading"><h2 id="photosHeading"><span class="step-number">02</span>写真を追加</h2><span id="imageCount" class="image-count" aria-live="polite">0 / 4</span></div>
+                        <div class="upload-section">
+                            <input type="file" id="imageInput" multiple accept="image/*">
+                            <label for="imageInput" class="upload-btn">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M14 4H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h13a2 2 0 0 0 2-2v-9M18 2v6m-3-3h6M3 16l5-5 5 5 3-3 4 4"/><circle cx="8" cy="7" r="1"/></svg>
+                                <strong>写真を選ぶ</strong><span>または、ここにドロップ</span>
+                            </label>
+                        </div>
+                        <div id="imageList" class="image-list"></div>
+                        <p id="imageListEmpty" class="empty-list-hint">最大4枚。追加した写真から編集できます。</p>
+                    </section>
+
+                    <section class="panel export-panel" aria-labelledby="exportHeading">
+                        <div class="panel-heading"><h2 id="exportHeading"><span class="step-number">03</span>一枚に書き出す</h2><span class="panel-caption">EXPORT</span></div>
+                        <p class="export-description">白背景・300ppi相当の画像で保存</p>
+                        <div class="actions">
+                            <button id="downloadPng" class="btn primary" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4"/></svg>PNG<span class="visually-hidden">で保存</span></button>
+                            <button id="downloadJpeg" class="btn secondary" disabled>JPEG<span class="visually-hidden">で保存</span></button>
+                        </div>
+                    </section>
+                </aside>
+
+                <section class="canvas-wrapper" data-orientation="landscape" aria-labelledby="previewHeading">
+                    <div class="preview-header">
+                        <div><p class="eyebrow">YOUR CANVAS</p><h2 id="previewHeading">レイアウトプレビュー</h2></div>
+                        <span id="paperSummary" class="paper-summary">L判・横向き</span>
                     </div>
-                </div>
-            </section>
-
-            <!-- Upload Section -->
-            <section class="upload-section">
-                <input type="file" id="imageInput" multiple accept="image/*">
-                <label for="imageInput" class="upload-btn">画像をアップロード (最大4枚)</label>
-            </section>
-
-            <!-- Image List / Editor Entry -->
-            <section id="imageList" class="image-list">
-                <!-- Thumbnails will be added here -->
-            </section>
-
-            <!-- Canvas Container -->
-            <section class="canvas-wrapper">
-                <h3>プレビュー (ドラッグで移動)</h3>
-                <div class="canvas-scroll-container">
-                    <canvas id="outputCanvas"></canvas>
-                </div>
-            </section>
-
-            <!-- Action Buttons -->
-            <section class="actions">
-                <button id="downloadPng" class="btn primary">PNGで保存</button>
-                <button id="downloadJpeg" class="btn secondary">JPEGで保存</button>
-            </section>
+                    <div class="canvas-scroll-container">
+                        <div class="paper-surface">
+                            <span id="paperDimensions" class="paper-dimensions">127 × 89 mm</span>
+                            <canvas id="outputCanvas" aria-label="印刷用レイアウト。写真をドラッグして配置できます。"></canvas>
+                            <div id="canvasEmpty" class="canvas-empty">
+                                <span class="empty-photo-mark" aria-hidden="true"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8" cy="8" r="1.5"/><path d="m3 17 6-6 5 5 3-3 4 4"/></svg></span>
+                                <strong>ここから、あなたの一枚を。</strong><span>写真を追加すると、レイアウトを始められます。</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="preview-footer"><span><span class="status-dot" aria-hidden="true"></span>ドラッグで配置・1mm単位で調整</span><span id="outputDimensions">1500 × 1051 px</span></div>
+                </section>
+            </div>
         </main>
+        <footer class="app-footer"><span>Made for your favorite moments.</span><span>PHOTO LAYOUT</span></footer>
     </div>
 
     <!-- Modal for Cropping -->
-    <div id="cropModal" class="modal hidden">
+    <div id="cropModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="cropHeading">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>画像をトリミング</h2>
-                <button id="closeModal" class="close-btn">&times;</button>
+                <div><p class="eyebrow">CROP & SIZE</p><h2 id="cropHeading">写真をトリミング</h2></div>
+                <button id="closeModal" class="close-btn" aria-label="編集画面を閉じる">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="crop-container">
                     <img id="cropImage" src="" alt="To Crop">
-                    <div class="crop-toolbar">
-                        <label title="画像を切り抜き"><input type="radio" name="cropTool" value="crop" checked> ✂️ クロップ</label>
-                        <label title="画像を移動"><input type="radio" name="cropTool" value="move"> ✋ 移動</label>
-                    </div>
                 </div>
+                <p class="crop-hint">枠をドラッグして範囲を調整。ホイールやピンチで拡大縮小できます。</p>
 
                 <div class="crop-controls">
-                    <div class="crop-mode-switch">
-                        <label><input type="radio" name="cropMode" value="free" checked> 自由 / 比率</label>
-                        <label><input type="radio" name="cropMode" value="mm"> mm指定</label>
-                    </div>
-
-                    <div id="mmControls" class="mm-inputs hidden">
-                        <label>幅(mm): <input type="number" id="cropDidWidth" value="40" min="1"></label>
-                        <label>高さ(mm): <input type="number" id="cropDidHeight" value="30" min="1"></label>
-                        <!-- Apply button removed -->
+                    <div class="mm-inputs">
+                        <label>幅(mm): <input type="number" id="cropDidWidth" value="40" min="1" step="0.1" required></label>
+                        <label>高さ(mm): <input type="number" id="cropDidHeight" value="30" min="1" step="0.1" required></label>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button id="deleteImage" class="btn danger" style="margin-right: auto;">この画像を削除</button>
-                <button id="confirmCrop" class="btn primary">決定</button>
+                <div id="cropResolution" class="crop-resolution" role="status" aria-live="polite" aria-atomic="true">
+                    <p>印刷解像度: <strong id="cropPpiValue">— ppi</strong></p>
+                    <p id="cropPpiMessage" class="crop-resolution-message">画像を読み込み中です。</p>
+                </div>
+                <div class="modal-actions">
+                    <button id="deleteImage" class="btn danger" style="margin-right: auto;">この画像を削除</button>
+                    <button id="confirmCrop" class="btn primary">決定</button>
+                </div>
             </div>
         </div>
     </div>
